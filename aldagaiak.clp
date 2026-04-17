@@ -1,2 +1,2 @@
 ; Aldagai globalak: 
-(defglobal ?*N* = 3)
+(defglobal ?*N* = 4)
