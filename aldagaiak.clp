@@ -1,3 +1,3 @@
 ; Aldagai globalak: 
-(defglobal ?*N* = 4)
-(defglobal ?*LENGTH* = 16)
+(defglobal ?*N* = 6)
+(defglobal ?*LENGTH* = (* ?*N* ?*N*))
