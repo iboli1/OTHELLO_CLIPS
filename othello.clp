@@ -64,6 +64,11 @@
   (bind ?hasierakoP)
   ;gorantz
   (bind ?i ?pos)
+
+  (bind ?norantzak (create$ (* ?*N* -1) (- 1 ?*N*) 1 (+ ?*N* 1) ?*N* (- ?*N* 1) -1 (- -1 ?*N*)))
+
+  (loop-for-count (?i 1 (length$ ?norantzak)))
+
   (while (or (> ?i 1)  (< ?i ?*N*))
     
   )
@@ -77,4 +82,39 @@
 =>
   (printout t "Jokoa amaitu da" crlf)
   (halt)
+)
+
+
+
+;mugen barruan badago 1 itzuli, kanpoan badago 0
+(deffunction mugenBarruan (?pos)
+  (if (and (>= ?pos 1) (<= ?pos ?*LENGTH*)) then
+    (return 1)
+  else
+    (return 0)
+  )
+)
+
+;okupatuta badago, 0 itzuli, libre badago 1
+(deffunction libreDago (?tablerue ?pos)
+  (if (eq (nth$ ?pos $?tablerue) "-") then
+    (return 1)
+  else
+    (return 0)
+  )
+)
+
+;norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
+(deffunction norantzaOna (?tablerue ?norantza ?pos)
+  (bind ?berria (+ ?pos ?norantza))
+
+  ;ertza goian edo behean
+  (if (eq (mugenBarruan ?berria) 0) then
+    (return 0)
+  )
+
+  ;ertza ezkerrean edo eskuinean
+  (if (and (not (eq (- (mod ?berria ?*N*) 1) (- (mod ?pos ?*N*) 1)) and (or (eq (- ?berria 1) ?pos) (eq (+ ?berria 1) ?pos)) (or (eq (+ ?pos 1) ?berria) (eq (- ?pos 1) ?berria)))) then
+    (return 0)
+  )
 )
