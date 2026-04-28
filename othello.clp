@@ -115,7 +115,7 @@
 
   ;ertza ezkerrean edo eskuinean (aurrekoa mod N = 0 eta berria mod N = 1 edo aurrekoa mod N = 1 eta berria mod N = 0)
   (if (or (and (eq (mod ?pos ?*N*) 0) (eq (mod ?berria ?*N*) 1)) (and (eq (mod ?pos ?*N*) 1) (eq (mod ?berria ?*N*) 0))) then
-¡   (return 0)
+    (return 0)
   )
   (return 1)
 )
