@@ -108,13 +108,14 @@
 (deffunction norantzaOna (?tablerue ?norantza ?pos)
   (bind ?berria (+ ?pos ?norantza))
 
-  ;ertza goian edo behean
+  ;ertza goian edo behean (berria bektoretik kanpo egotea)
   (if (eq (mugenBarruan ?berria) 0) then
     (return 0)
   )
 
-  ;ertza ezkerrean edo eskuinean
-  (if (and (not (eq (- (mod ?berria ?*N*) 1) (- (mod ?pos ?*N*) 1)) and (or (eq (- ?berria 1) ?pos) (eq (+ ?berria 1) ?pos)) (or (eq (+ ?pos 1) ?berria) (eq (- ?pos 1) ?berria)))) then
-    (return 0)
+  ;ertza ezkerrean edo eskuinean (aurrekoa mod N = 0 eta berria mod N = 1 edo aurrekoa mod N = 1 eta berria mod N = 0)
+  (if (or (and (eq (mod ?pos ?*N*) 0) (eq (mod ?berria ?*N*) 1)) (and (eq (mod ?pos ?*N*) 1) (eq (mod ?berria ?*N*) 0))) then
+¡   (return 0)
   )
+  (return 1)
 )
