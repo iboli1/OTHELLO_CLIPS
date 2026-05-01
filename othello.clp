@@ -100,7 +100,7 @@
   (if (and (= (libreDago ?pos ?tableroa) 1) (= (mugenBarruan ?pos) 1)) then
     (loop-for-count (?i 1 (length$ ?norantzak))
         (bind ?norantza (nth$ ?i ?norantzak))
-        (if (= (norantzaOna ?norantza ?pos ?unekoTxanda ?tableroa) 1) then
+        (if (= (norantzaOna ?norantza ?pos ?unekoTxanda $?tableroa) 1) then
           (bind ?bada 1)
         )
     )
@@ -138,16 +138,8 @@
   )
 )
 
-;norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
-(deffunction norantzaOna (?norantza ?pos ?unekoTxanda $?tablerue)
-  (bind ?berria (+ ?pos ?norantza))
-  (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
-    (bind ?aurkariFitxa "b")
-  else 
-    (bind ?fitxa "b")
-    (bind ?aurkariFitxa "z")
-  )
+;norantzaOna originala ertzak bilatzeko: norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
+(deffunction ertzikEz (?pos ?berria)
 
   ;ertza goian edo behean (berria bektoretik kanpo egotea)
   (if (eq (mugenBarruan ?berria) 0) then
@@ -159,35 +151,66 @@
     (return 0)
   )
 
+  (return 1)
+
+)
+
+
+
+
+;norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
+(deffunction norantzaOna (?norantza ?pos ?unekoTxanda $?tablerue)
+  (bind ?berria (+ ?pos ?norantza))
+
+  (if (eq ?unekoTxanda zuria) then
+    (bind ?fitxa "z")
+    (bind ?aurkariFitxa "b")
+  else 
+    (bind ?fitxa "b")
+    (bind ?aurkariFitxa "z")
+  )
+
+  ;ertzatik kanpo ateratzen bada 0 itzuli (ertzikEz deiarekin)
+  (if (eq (ertzikEz ?pos ?berria) 0) then
+    (return 0)
+  )
+
   ;hurrengo posizioa hutsa bada ez da legala
   (if (eq (nth$ ?berria ?tablerue) "-") then
     (return 0)
   
   else 
   
-    ;hurrengo posizioa fitxa berdina du
+    ;hurrengo posizioa nire fitxa berdina du
     (if (eq (nth$ ?berria ?tablerue) ?fitxa) then
       (return 0)
-    else 
-      ;fitxa aurkariarena da
+    
+    else
+    
+      ;badaezpada aurkaria dela egiaztatu
       (if (eq (nth$ ?berria ?tablerue) ?aurkariFitxa) then
       
         (bind ?jarraitu 1)
+
         (while (= ?jarraitu 1)
+          (bind ?unekoa ?berria)
           (bind ?berria (+ ?berria ?norantza))
-          (if (eq (mugenBarruan ?berria) 0) then
+
+          ;ertzatik kanpo ateratzen bada 0 itzuli (ertzikEz deiarekin)
+          (if (eq (ertzikEz ?unekoa ?berria) 0) then
             (return 0)
           )
+
+          ;hurrengo posizioa hutsa bada ez da legala
           (if (eq (nth$ ?berria ?tablerue) "-") then
             (return 0)
           )
-          (if (or (and (eq (mod ?pos ?*N*) 0) (eq (mod ?berria ?*N*) 1)) (and (eq (mod ?pos ?*N*) 1) (eq (mod ?berria ?*N*) 0))) then
-              (return 0)
-          )
+
+          ;hurrengo posizioa nire fitxa berdina du
           (if (eq (nth$ ?berria ?tablerue) ?fitxa) then
             (bind ?jarraitu 0)
           )
-        
+      
         )
       
       )
@@ -195,5 +218,7 @@
     ) 
 
   )
+
   (return 1)
+  
 )
