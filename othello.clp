@@ -1,3 +1,5 @@
+;ERREGELAK
+
 (defrule hasierakoTablerue
   (declare (salience 30)) ;beti lehena
 =>
@@ -56,28 +58,38 @@
   (jokalariTxanda ?jokTxanda)
   (test (eq ?unekoTxanda ?jokTxanda))
 =>
-  (bind ?jarraitu 1)
-  (printout t "Zure txanda da" crlf)
-  (while (= ?jarraitu 1)
-    (bind ?pos (read))
-    (if (> (length$ (mugimenduLegala ?pos ?unekoTxanda $?t)) 0)  then
-      (printout t "Mugimendu legala" crlf)
-      (assert (fitxakop (+ ?f 1)))
-      (retract ?fitxakop)
-      (if (eq ?unekoTxanda beltza) then
-        (assert (txanda zuria))
-        (bind ?fitxa "b")
-      else
-        (assert (txanda beltza))
-        (bind ?fitxa "z")
-      ) 
-      (retract ?txanda)
-      (assert (tablerue (fitxakAldatu ?pos ?unekoTxanda $?t))) ;fitxakAldatu-ri dei egin fitxak aldatzeko
-      (retract ?table)
-      (bind ?jarraitu 0)
-    else 
-      (printout t "Ez da mugimendu legala" crlf)
+  (if (= (mugimenduLegalik ?unekoTxanda $?t) 1) then
+    (bind ?jarraitu 1)
+    (printout t "Zure txanda da" crlf)
+    (while (= ?jarraitu 1)
+      (bind ?pos (read))
+      (if (> (length$ (mugimenduLegala ?pos ?unekoTxanda $?t)) 0)  then
+        (printout t "Mugimendu legala" crlf)
+        (assert (fitxakop (+ ?f 1)))
+        (retract ?fitxakop)
+        (if (eq ?unekoTxanda beltza) then
+          (assert (txanda zuria))
+          (bind ?fitxa "b")
+        else
+          (assert (txanda beltza))
+          (bind ?fitxa "z")
+        ) 
+        (retract ?txanda)
+        (assert (tablerue (fitxakAldatu ?pos ?unekoTxanda $?t))) ;fitxakAldatu-ri dei egin fitxak aldatzeko
+        (retract ?table)
+        (bind ?jarraitu 0)
+      else 
+        (printout t "Ez da mugimendu legala" crlf)
+      )
     )
+  else
+    (printout t "Ez duzu mugimendu legalik" crlf)
+    (if (eq ?unekoTxanda beltza) then
+      (assert (txanda zuria))
+    else 
+      (assert (txanda beltza))
+    )
+    (retract ?txanda)
   )
 )
 
@@ -92,24 +104,6 @@
   (printout t "Agentearen txanda da" crlf)
 )
 
-;mugimendu legala bada listan sartu, azkenean lista itzuli (hutsa edo beteta)
-(deffunction mugimenduLegala (?pos ?unekoTxanda $?tableroa)
-
-  (bind ?norantzaOnakLista (create$))
-
-  (bind ?norantzak (create$ (* ?*N* -1) (- 1 ?*N*) 1 (+ ?*N* 1) ?*N* (- ?*N* 1) -1 (- -1 ?*N*)))
-  (if (and (= (libreDago ?pos ?tableroa) 1) (= (mugenBarruan ?pos) 1)) then
-    (loop-for-count (?i 1 (length$ ?norantzak))
-        (bind ?norantza (nth$ ?i ?norantzak))
-        (if (= (norantzaOna ?norantza ?pos ?unekoTxanda $?tableroa) 1) then
-          (bind ?norantzaOnakLista (create$ ?norantzaOnakLista ?norantza))
-        )
-    )
-  )
-  
-  (return ?norantzaOnakLista)  
-)
-
 (defrule amaitu
   (declare (salience 20))
   (fitxakop ?fitxakop)
@@ -121,133 +115,4 @@
 
 
 
-;mugen barruan badago 1 itzuli, kanpoan badago 0
-(deffunction mugenBarruan (?pos)
-  (if (and (>= ?pos 1) (<= ?pos ?*LENGTH*)) then
-    (return 1)
-  else
-    (return 0)
-  )
-)
 
-;okupatuta badago, 0 itzuli, libre badago 1
-(deffunction libreDago (?pos $?tablerue)
-  (if (eq (nth$ ?pos $?tablerue) "-") then
-    (return 1)
-  else
-    (return 0)
-  )
-)
-
-;norantzaOna originala ertzak bilatzeko: norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
-(deffunction ertzikEz (?pos ?berria)
-
-  ;ertza goian edo behean (berria bektoretik kanpo egotea)
-  (if (eq (mugenBarruan ?berria) 0) then
-    (return 0)
-  )
-
-  ;ertza ezkerrean edo eskuinean (aurrekoa mod N = 0 eta berria mod N = 1 edo aurrekoa mod N = 1 eta berria mod N = 0)
-  (if (or (and (eq (mod ?pos ?*N*) 0) (eq (mod ?berria ?*N*) 1)) (and (eq (mod ?pos ?*N*) 1) (eq (mod ?berria ?*N*) 0))) then
-    (return 0)
-  )
-
-  (return 1)
-
-)
-
-
-
-
-;norantza ona bada, 1 itzuli, norantza matrizearen ertzetatik ateratzen bada, 0
-(deffunction norantzaOna (?norantza ?pos ?unekoTxanda $?tablerue)
-  (bind ?berria (+ ?pos ?norantza))
-
-  (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
-    (bind ?aurkariFitxa "b")
-  else 
-    (bind ?fitxa "b")
-    (bind ?aurkariFitxa "z")
-  )
-
-  ;ertzatik kanpo ateratzen bada 0 itzuli (ertzikEz deiarekin)
-  (if (eq (ertzikEz ?pos ?berria) 0) then
-    (return 0)
-  )
-
-  ;hurrengo posizioa hutsa bada ez da legala
-  (if (eq (nth$ ?berria ?tablerue) "-") then
-    (return 0)
-  
-  else 
-  
-    ;hurrengo posizioa nire fitxa berdina du
-    (if (eq (nth$ ?berria ?tablerue) ?fitxa) then
-      (return 0)
-    
-    else
-    
-      ;badaezpada aurkaria dela egiaztatu
-      (if (eq (nth$ ?berria ?tablerue) ?aurkariFitxa) then
-      
-        (bind ?jarraitu 1)
-
-        (while (= ?jarraitu 1)
-          (bind ?unekoa ?berria)
-          (bind ?berria (+ ?berria ?norantza))
-
-          ;ertzatik kanpo ateratzen bada 0 itzuli (ertzikEz deiarekin)
-          (if (eq (ertzikEz ?unekoa ?berria) 0) then
-            (return 0)
-          )
-
-          ;hurrengo posizioa hutsa bada ez da legala
-          (if (eq (nth$ ?berria ?tablerue) "-") then
-            (return 0)
-          )
-
-          ;hurrengo posizioa nire fitxa berdina du
-          (if (eq (nth$ ?berria ?tablerue) ?fitxa) then
-            (bind ?jarraitu 0)
-          )
-      
-        )
-      
-      )
-      
-    )
-
-  )
-
-  (return 1)
-
-)
-
-
-;fitxak aldatzeko
-(deffunction fitxakAldatu (?pos ?unekoTxanda $?tablerue)
-
-  ;igual hay jarri daiteke funtzio batean zeren asko errepikatzen da
-  (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
-    (bind ?aurkariFitxa "b")
-  else 
-    (bind ?fitxa "b")
-    (bind ?aurkariFitxa "z")
-  )
-
-  (bind ?norantzak (mugimenduLegala ?pos ?unekoTxanda $?tablerue))
-
-  (bind ?tablerue (replace$ $?tablerue ?pos ?pos ?fitxa))
-
-  (loop-for-count (?i 1 (length$ ?norantzak))
-    (bind ?norantza (nth$ ?i ?norantzak))
-    (bind ?berria (+ ?pos ?norantza))
-    (while (not (eq (nth$ ?berria ?tablerue) ?fitxa))
-      (bind ?tablerue (replace$ ?tablerue ?berria ?berria ?fitxa))
-      (bind ?berria (+ ?berria ?norantza))
-    )
-  )
-  (return ?tablerue)
-)
