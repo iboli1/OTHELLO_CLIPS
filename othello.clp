@@ -60,7 +60,7 @@
   (printout t "Zure txanda da" crlf)
   (while (= ?jarraitu 1)
     (bind ?pos (read))
-    (if (= (mugimenduLegala ?pos ?unekoTxanda $?t) 1)  then
+    (if (> (length$ (mugimenduLegala ?pos ?unekoTxanda $?t)) 0)  then
       (printout t "Mugimendu legala" crlf)
       (assert (fitxakop (+ ?f 1)))
       (retract ?fitxakop)
@@ -72,7 +72,7 @@
         (bind ?fitxa "z")
       ) 
       (retract ?txanda)
-      (assert (tablerue (replace$ $?t ?pos ?pos ?fitxa)))
+      (assert (tablerue (fitxakAldatu ?pos ?unekoTxanda $?t))) ;fitxakAldatu-ri dei egin fitxak aldatzeko
       (retract ?table)
       (bind ?jarraitu 0)
     else 
@@ -92,21 +92,22 @@
   (printout t "Agentearen txanda da" crlf)
 )
 
-;mugimendu legala bada 1, ez bada legala 0
+;mugimendu legala bada listan sartu, azkenean lista itzuli (hutsa edo beteta)
 (deffunction mugimenduLegala (?pos ?unekoTxanda $?tableroa)
-  (bind ?bada 0)
+
+  (bind ?norantzaOnakLista (create$))
 
   (bind ?norantzak (create$ (* ?*N* -1) (- 1 ?*N*) 1 (+ ?*N* 1) ?*N* (- ?*N* 1) -1 (- -1 ?*N*)))
   (if (and (= (libreDago ?pos ?tableroa) 1) (= (mugenBarruan ?pos) 1)) then
     (loop-for-count (?i 1 (length$ ?norantzak))
         (bind ?norantza (nth$ ?i ?norantzak))
         (if (= (norantzaOna ?norantza ?pos ?unekoTxanda $?tableroa) 1) then
-          (bind ?bada 1)
+          (bind ?norantzaOnakLista (create$ ?norantzaOnakLista ?norantza))
         )
     )
   )
   
-  (return ?bada)  
+  (return ?norantzaOnakLista)  
 )
 
 (defrule amaitu
@@ -215,10 +216,38 @@
       
       )
       
-    ) 
+    )
 
   )
 
   (return 1)
-  
+
+)
+
+
+;fitxak aldatzeko
+(deffunction fitxakAldatu (?pos ?unekoTxanda $?tablerue)
+
+  ;igual hay jarri daiteke funtzio batean zeren asko errepikatzen da
+  (if (eq ?unekoTxanda zuria) then
+    (bind ?fitxa "z")
+    (bind ?aurkariFitxa "b")
+  else 
+    (bind ?fitxa "b")
+    (bind ?aurkariFitxa "z")
+  )
+
+  (bind ?norantzak (mugimenduLegala ?pos ?unekoTxanda $?tablerue))
+
+  (bind ?tablerue (replace$ $?tablerue ?pos ?pos ?fitxa))
+
+  (loop-for-count (?i 1 (length$ ?norantzak))
+    (bind ?norantza (nth$ ?i ?norantzak))
+    (bind ?berria (+ ?pos ?norantza))
+    (while (not (eq (nth$ ?berria ?tablerue) ?fitxa))
+      (bind ?tablerue (replace$ ?tablerue ?berria ?berria ?fitxa))
+      (bind ?berria (+ ?berria ?norantza))
+    )
+  )
+  (return ?tablerue)
 )
