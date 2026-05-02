@@ -62,8 +62,16 @@
     (bind ?jarraitu 1)
     (printout t "Zure txanda da" crlf)
     (while (= ?jarraitu 1)
-      (bind ?pos (read))
-      (if (> (length$ (mugimenduLegala ?pos ?unekoTxanda $?t)) 0)  then
+      (printout t "Sartu errenkada:" crlf)
+      (bind ?erren (read))
+      (printout t "Sartu zutabea:" crlf)
+      (bind ?zut (read))
+
+      (bind ?pos (+ (* (- ?erren 1) ?*N*) ?zut))  
+
+
+
+      (if (and (<= ?pos ?*LENGTH*) (> ?pos 0) (> (length$ (mugimenduLegala ?pos ?unekoTxanda $?t)) 0))  then
         (printout t "Mugimendu legala" crlf)
         (assert (fitxakop (+ ?f 1)))
         (retract ?fitxakop)
