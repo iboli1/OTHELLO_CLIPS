@@ -159,6 +159,23 @@
   (return 0) ; ez dago mugimendu posiblerik
 )
 
+(deffunction fitxaKop (?unekoTxanda $?tablerue)
+  
+  (if (eq ?unekoTxanda zuria) then
+    (bind ?fitxa "z")
+    else
+    (bind ?fitxa "b")
+  )
+  (bind ?fitxakop 0)
+  (loop-for-count (?i 1 ?*LENGTH*)
+      (if (eq (nth$ ?i ?tablerue) ?fitxa) then
+        (bind ?fitxakop (+ ?fitxakop 1))
+      )
+  )
+
+  (return ?fitxakop)
+
+)
 
 (deffunction zenbatFitxa (?pos ?unekoTxanda $?tablerue)
   (bind ?fitxakop 0)
@@ -170,12 +187,32 @@
 
   (bind ?tKopia (fitxakAldatu ?pos ?unekoTxanda $?tablerue))
 
-  (loop-for-count (?i 1 ?*LENGTH*)
-      (if (eq (nth$ ?i ?tKopia) ?fitxa) then
-        (bind ?fitxakop (+ ?fitxakop 1))
-      )
-  )
+  (bind ?fitxakop (fitxaKop ?unekoTxanda $?tKopia))
+
   (return ?fitxakop)
+)
+
+
+
+(deffunction posOnena (?unekoTxanda $?tablerue)
+  (bind ?posOnena 0)
+  (bind ?scoreOnena 0)
+  (bind ?izkinak (create$ 1 6 30 36))
+  (loop-for-count (?i 1 ?*LENGTH*)
+    (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
+      (bind ?fitxaKopHur (zenbatFitxa ?i ?unekoTxanda $?tablerue))
+      (bind ?fitxaKopOr (fitxaKop ?unekoTxanda $?tablerue))
+      (bind ?score (- ?fitxaKopHur ?fitxaKopOr))
+      (if (member$ ?i ?izkinak) then
+        (bind ?score (+ ?score 5))
+      )
+      (if (< ?scoreOnena ?score) then
+        (bind ?scoreOnena ?score)
+        (bind ?posOnena ?i)
+      )
+    )
+  )
+  (return ?posOnena)
 )
 
 (deffunction irabazle (?jokalariTxanda $?tablerue)
@@ -209,20 +246,4 @@
   (printout t ?beltzKop)
   (printout t "-")
   (printout t ?zuriKop crlf)
-)
-
-(deffunction posOnena (?unekoTxanda $?tablerue)
-  (bind ?posOnena 0)
-  (bind ?fitxaKopOnena 0)
-
-  (loop-for-count (?i 1 ?*LENGTH*)
-    (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
-      (bind ?fitxaKop (zenbatFitxa ?i ?unekoTxanda $?tablerue))
-      (if (< ?fitxaKopOnena ?fitxaKop) then
-        (bind ?fitxaKopOnena ?fitxaKop)
-        (bind ?posOnena ?i)
-      )
-    )
-  )
-  (return ?posOnena)
 )
