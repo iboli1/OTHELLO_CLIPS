@@ -123,8 +123,6 @@
 ;fitxak aldatzeko
 (deffunction fitxakAldatu (?pos ?unekoTxanda $?tablerue)
 
-  ;igual hay jarri daiteke funtzio batean zeren asko errepikatzen da
-  ; ze euskera da hori lol
   (if (eq ?unekoTxanda zuria) then
     (bind ?fitxa "z")
     (bind ?aurkariFitxa "b")
@@ -159,4 +157,72 @@
     )
   )
   (return 0) ; ez dago mugimendu posiblerik
+)
+
+
+(deffunction zenbatFitxa (?pos ?unekoTxanda $?tablerue)
+  (bind ?fitxakop 0)
+  (if (eq ?unekoTxanda zuria) then
+    (bind ?fitxa "z")
+    else
+    (bind ?fitxa "b")
+  )
+
+  (bind ?tKopia (fitxakAldatu ?pos ?unekoTxanda $?tablerue))
+
+  (loop-for-count (?i 1 ?*LENGTH*)
+      (if (eq (nth$ ?i ?tKopia) ?fitxa) then
+        (bind ?fitxakop (+ ?fitxakop 1))
+      )
+  )
+  (return ?fitxakop)
+)
+
+(deffunction irabazle (?jokalariTxanda $?tablerue)
+  (bind ?zuriKop 0)
+  (bind ?beltzKop 0)
+  (loop-for-count (?i 1 ?*LENGTH*)
+      (if (eq (nth$ ?i ?tablerue) "z") then
+        (bind ?zuriKop (+ ?zuriKop 1))
+      )
+      (if (eq (nth$ ?i ?tablerue) "b") then
+        (bind ?beltzKop (+ ?beltzKop 1))
+      )
+  )
+  (if (> ?beltzKop ?zuriKop) then
+    (if (eq ?jokalariTxanda beltza) then
+        (printout t "Irabazi duzu!" crlf)
+      else
+        (printout t "Agenteak irabazi du. " crlf)
+    )
+  else 
+    (if (< ?beltzKop ?zuriKop) then
+      (if (eq ?jokalariTxanda zuria) then
+        (printout t "Irabazi duzu!" crlf)
+      else
+        (printout t "Agenteak irabazi du. " crlf)
+      )
+    else
+      (printout t "Empate" crlf)
+    )
+  )
+  (printout t ?beltzKop)
+  (printout t "-")
+  (printout t ?zuriKop crlf)
+)
+
+(deffunction posOnena (?unekoTxanda $?tablerue)
+  (bind ?posOnena 0)
+  (bind ?fitxaKopOnena 0)
+
+  (loop-for-count (?i 1 ?*LENGTH*)
+    (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
+      (bind ?fitxaKop (zenbatFitxa ?i ?unekoTxanda $?tablerue))
+      (if (< ?fitxaKopOnena ?fitxaKop) then
+        (bind ?fitxaKopOnena ?fitxaKop)
+        (bind ?posOnena ?i)
+      )
+    )
+  )
+  (return ?posOnena)
 )

@@ -16,6 +16,8 @@
   (assert (fitxakop 4))
   (assert (txanda beltza)) ; fitxa beltzak dituena hasten da
   (assert (tablerue ?tablerue))
+  (assert (mugimendurikJok 1))
+  (assert (mugimendurikAg 1))
   
   (bind ?jarraitu 1)
   (while (= ?jarraitu 1)
@@ -29,7 +31,7 @@
     else 
       (if (= ?aukera 2) then
        (assert (jokalariTxanda zuria))
-       (bind ?jarraitu 1)
+       (bind ?jarraitu 0)
       else
        (printout t "1 edo 2 idatzi!" crlf)
       )
@@ -39,7 +41,7 @@
 )
 
 (defrule erakutsiTablerue
-  (declare (salience 10))
+  (declare (salience 20))
   (tablerue $?t)   
 =>
   (loop-for-count (?i 1 (* ?*N* ?*N*))
@@ -57,10 +59,13 @@
   ?fitxakop <- (fitxakop ?f)
   (jokalariTxanda ?jokTxanda)
   (test (eq ?unekoTxanda ?jokTxanda))
+  ?mugimendurik <- (mugimendurikJok ?m)
 =>
   (if (= (mugimenduLegalik ?unekoTxanda $?t) 1) then
-    (bind ?jarraitu 1)
     (printout t "Zure txanda da" crlf)
+    (retract ?mugimendurik)
+    (assert (mugimendurikJok 1))
+    (bind ?jarraitu 1)
     (while (= ?jarraitu 1)
       (printout t "Sartu errenkada:" crlf)
       (bind ?erren (read))
@@ -92,6 +97,8 @@
     )
   else
     (printout t "Ez duzu mugimendu legalik" crlf)
+    (retract ?mugimendurik)
+    (assert (mugimendurikJok 0))
     (if (eq ?unekoTxanda beltza) then
       (assert (txanda zuria))
     else 
@@ -108,16 +115,40 @@
   ?fitxakop <- (fitxakop ?f)
   (jokalariTxanda ?jTxanda)
   (test (neq ?unekoTxanda ?jTxanda))
+  ?mugimendurik <- (mugimendurikAg ?m)
 =>
-  (printout t "Agentearen txanda da" crlf)
+  (if (= (mugimenduLegalik ?unekoTxanda $?t) 1) then
+    (printout t "Agentearen txanda da" crlf)
+    (assert (tablerue(fitxakAldatu (posOnena ?unekoTxanda $?t) ?unekoTxanda $?t)))
+    (assert (fitxakop (+ ?f 1)))
+    (retract ?table)
+    (retract ?fitxakop)
+    (retract ?mugimendurik)
+    (assert (mugimendurikAg 1))
+  else
+    (printout t "Agenteak ez du mugimendu legalik" crlf)
+    (retract ?mugimendurik)
+    (assert (mugimendurikAg 0))
+  )
+  (if (eq ?unekoTxanda zuria) then
+    (assert (txanda beltza))
+  else
+    (assert (txanda zuria))
+  )
+  (retract ?txanda)
 )
 
 (defrule amaitu
-  (declare (salience 20))
+  (declare (salience 10))
   (fitxakop ?fitxakop)
-  (test (= ?fitxakop ?*LENGTH*))
+  (mugimendurikAg ?mAg)
+  (mugimendurikJok ?mJok)
+  (test (or (= ?fitxakop ?*LENGTH*) (and (= ?mAg 0) (= ?mJok 0))))
+  (tablerue $?t)
+  (jokalariTxanda ?jTxanda)
 =>
   (printout t "Jokoa amaitu da" crlf)
+  (irabazle ?jTxanda $?t)
   (halt)
 )
 
