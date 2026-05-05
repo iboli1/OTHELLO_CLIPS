@@ -197,7 +197,7 @@
 (deffunction posOnena (?unekoTxanda $?tablerue)
   (bind ?posOnena 0)
   (bind ?scoreOnena 0)
-  (bind ?izkinak (create$ 1 6 30 36))
+  (bind ?izkinak (create$ 1 ?*N* (-(* ?*N* (- ?*N* 1)) 1) ?*LENGTH*))
   (loop-for-count (?i 1 ?*LENGTH*)
     (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
       (bind ?fitxaKopHur (zenbatFitxa ?i ?unekoTxanda $?tablerue))
