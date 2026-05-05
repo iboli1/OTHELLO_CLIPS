@@ -198,13 +198,17 @@
   (bind ?posOnena 0)
   (bind ?scoreOnena 0)
   (bind ?izkinak (create$ 1 ?*N* (-(* ?*N* (- ?*N* 1)) 1) ?*LENGTH*))
+  (bind ?izkinenOndoan (create$ 2 (+ ?*N* 1) (+ ?*N* 2) (- ?*N* 1) (- (* ?*N* 2) 1) (* ?*N* 2) (+ (- ?*LENGTH* (* ?*N* 2)) 1) (+ (- ?*LENGTH* (* ?*N* 2)) 2) (+ (- ?*LENGTH* ?*N*) 2) (- (- ?*LENGTH* ?*N*) 1) (- ?*LENGTH* ?*N*) (- ?*LENGTH* 1)))
   (loop-for-count (?i 1 ?*LENGTH*)
     (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
-      (bind ?fitxaKopHur (zenbatFitxa ?i ?unekoTxanda $?tablerue))
-      (bind ?fitxaKopOr (fitxaKop ?unekoTxanda $?tablerue))
+      (bind ?fitxaKopHur (zenbatFitxa ?i ?unekoTxanda $?tablerue)) ;agenteak zenbat fitxa edukiko lituzke mugimendu hori egiten badu
+      (bind ?fitxaKopOr (fitxaKop ?unekoTxanda $?tablerue)) ;agentearen fitxa kopurua orain
       (bind ?score (- ?fitxaKopHur ?fitxaKopOr))
       (if (member$ ?i ?izkinak) then
         (bind ?score (+ ?score 5))
+      )
+      (if (member$ ?i ?izkinenOndoan) then
+        (bind ?score (- ?score 3))
       )
       (if (< ?scoreOnena ?score) then
         (bind ?scoreOnena ?score)

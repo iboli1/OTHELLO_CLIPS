@@ -10,7 +10,8 @@
      else 
        (if (or (= ?i (+(+ (* (- (/ ?*N* 2) 1) ?*N*) (/ ?*N* 2)) 1)) (= ?i (+ (* (/ ?*N* 2) ?*N*) (/ ?*N* 2)))) then
          (bind ?tablerue (create$ ?tablerue "⚫"))
-       else (bind ?tablerue (create$ ?tablerue "  ·  ")))
+       else
+        (bind ?tablerue (create$ ?tablerue "  ·  ")))
      )
    )
   (assert (fitxakop 4))
@@ -45,13 +46,13 @@
   (tablerue $?t)   
 =>
   (printout t "     ")
-  (loop-for-count (?i 1 ?*N*)
+  (loop-for-count (?i 1 ?*N*) ;koordenatuak
     (printout t ?i "    ")
   )
   (printout t crlf)
   (loop-for-count (?i 1 (* ?*N* ?*N*))
     (if (= (mod ?i ?*N*) 1) then
-      (printout t (div (+ ?i ?*N* -1) ?*N*) "  ")
+      (printout t (div (+ ?i ?*N* -1) ?*N*) "  ") ;koordenatuak
     )
 
     (printout t (nth$ ?i ?t) " ")
@@ -64,9 +65,9 @@
 (defrule jokalariarenTxanda
   (declare (salience 5))
   ?table <- (tablerue $?t)
-  ?txanda <- (txanda ?unekoTxanda)
+  ?txanda <- (txanda ?unekoTxanda) ;zuria edo beltza
   ?fitxakop <- (fitxakop ?f)
-  (jokalariTxanda ?jokTxanda)
+  (jokalariTxanda ?jokTxanda) ;zuria jokalari gizakia zuria bada, beltza beltza bada
   (test (eq ?unekoTxanda ?jokTxanda))
   ?mugimendurik <- (mugimendurikJok ?m)
 =>
@@ -128,7 +129,7 @@
 =>
   (if (= (mugimenduLegalik ?unekoTxanda $?t) 1) then
     (printout t "Agentearen txanda da" crlf)
-    (assert (tablerue(fitxakAldatu (posOnena ?unekoTxanda $?t) ?unekoTxanda $?t)))
+    (assert (tablerue (fitxakAldatu (posOnena ?unekoTxanda $?t) ?unekoTxanda $?t)))
     (assert (fitxakop (+ ?f 1)))
     (retract ?table)
     (retract ?fitxakop)
