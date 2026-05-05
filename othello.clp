@@ -44,7 +44,16 @@
   (declare (salience 20))
   (tablerue $?t)   
 =>
+  (printout t "     ")
+  (loop-for-count (?i 1 ?*N*)
+    (printout t ?i "    ")
+  )
+  (printout t crlf)
   (loop-for-count (?i 1 (* ?*N* ?*N*))
+    (if (= (mod ?i ?*N*) 1) then
+      (printout t (div (+ ?i ?*N* -1) ?*N*) "  ")
+    )
+
     (printout t (nth$ ?i ?t) " ")
     (if (= (mod ?i ?*N*) 0) then
       (printout t crlf)
