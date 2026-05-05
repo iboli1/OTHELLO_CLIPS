@@ -6,11 +6,11 @@
   (bind ?tablerue (create$))
   (loop-for-count (?i 1 (* ?*N* ?*N*))
      (if (or (= ?i (+ (* (- (/ ?*N* 2) 1) ?*N*) (/ ?*N* 2))) (= ?i (+ (* (/ ?*N* 2) ?*N*) (/ ?*N* 2) 1))) then
-       (bind ?tablerue (create$ ?tablerue "z"))
+       (bind ?tablerue (create$ ?tablerue "⚪"))
      else 
        (if (or (= ?i (+(+ (* (- (/ ?*N* 2) 1) ?*N*) (/ ?*N* 2)) 1)) (= ?i (+ (* (/ ?*N* 2) ?*N*) (/ ?*N* 2)))) then
-         (bind ?tablerue (create$ ?tablerue "b"))
-       else (bind ?tablerue (create$ ?tablerue "-")))
+         (bind ?tablerue (create$ ?tablerue "⚫"))
+       else (bind ?tablerue (create$ ?tablerue "  ·  ")))
      )
    )
   (assert (fitxakop 4))
@@ -82,10 +82,10 @@
         (retract ?fitxakop)
         (if (eq ?unekoTxanda beltza) then
           (assert (txanda zuria))
-          (bind ?fitxa "b")
+          (bind ?fitxa "⚫")
         else
           (assert (txanda beltza))
-          (bind ?fitxa "z")
+          (bind ?fitxa "⚪")
         ) 
         (retract ?txanda)
         (assert (tablerue (fitxakAldatu ?pos ?unekoTxanda $?t))) ;fitxakAldatu-ri dei egin fitxak aldatzeko

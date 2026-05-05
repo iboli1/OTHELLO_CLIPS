@@ -11,7 +11,7 @@
 
 ;okupatuta badago, 0 itzuli, libre badago 1
 (deffunction libreDago (?pos $?tablerue)
-  (if (eq (nth$ ?pos $?tablerue) "-") then
+  (if (eq (nth$ ?pos $?tablerue) "  ·  ") then
     (return 1)
   else
     (return 0)
@@ -41,11 +41,11 @@
   (bind ?berria (+ ?pos ?norantza))
 
   (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
-    (bind ?aurkariFitxa "b")
+    (bind ?fitxa "⚪")
+    (bind ?aurkariFitxa "⚫")
   else 
-    (bind ?fitxa "b")
-    (bind ?aurkariFitxa "z")
+    (bind ?fitxa "⚫")
+    (bind ?aurkariFitxa "⚪")
   )
 
   ;ertzatik kanpo ateratzen bada 0 itzuli (ertzikEz deiarekin)
@@ -54,7 +54,7 @@
   )
 
   ;hurrengo posizioa hutsa bada ez da legala
-  (if (eq (nth$ ?berria ?tablerue) "-") then
+  (if (eq (nth$ ?berria ?tablerue) "  ·  ") then
     (return 0)
   
   else 
@@ -80,7 +80,7 @@
           )
 
           ;hurrengo posizioa hutsa bada ez da legala
-          (if (eq (nth$ ?berria ?tablerue) "-") then
+          (if (eq (nth$ ?berria ?tablerue) "  ·  ") then
             (return 0)
           )
 
@@ -124,11 +124,11 @@
 (deffunction fitxakAldatu (?pos ?unekoTxanda $?tablerue)
 
   (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
-    (bind ?aurkariFitxa "b")
+    (bind ?fitxa "⚪")
+    (bind ?aurkariFitxa "⚫")
   else 
-    (bind ?fitxa "b")
-    (bind ?aurkariFitxa "z")
+    (bind ?fitxa "⚫")
+    (bind ?aurkariFitxa "⚪")
   )
 
   (bind ?norantzak (mugimenduLegala ?pos ?unekoTxanda $?tablerue))
@@ -162,9 +162,9 @@
 (deffunction fitxaKop (?unekoTxanda $?tablerue)
   
   (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
+    (bind ?fitxa "⚪")
     else
-    (bind ?fitxa "b")
+    (bind ?fitxa "⚫")
   )
   (bind ?fitxakop 0)
   (loop-for-count (?i 1 ?*LENGTH*)
@@ -180,9 +180,9 @@
 (deffunction zenbatFitxa (?pos ?unekoTxanda $?tablerue)
   (bind ?fitxakop 0)
   (if (eq ?unekoTxanda zuria) then
-    (bind ?fitxa "z")
+    (bind ?fitxa "⚪")
     else
-    (bind ?fitxa "b")
+    (bind ?fitxa "⚫")
   )
 
   (bind ?tKopia (fitxakAldatu ?pos ?unekoTxanda $?tablerue))
@@ -219,10 +219,10 @@
   (bind ?zuriKop 0)
   (bind ?beltzKop 0)
   (loop-for-count (?i 1 ?*LENGTH*)
-      (if (eq (nth$ ?i ?tablerue) "z") then
+      (if (eq (nth$ ?i ?tablerue) "⚪") then
         (bind ?zuriKop (+ ?zuriKop 1))
       )
-      (if (eq (nth$ ?i ?tablerue) "b") then
+      (if (eq (nth$ ?i ?tablerue) "⚫") then
         (bind ?beltzKop (+ ?beltzKop 1))
       )
   )
@@ -244,6 +244,6 @@
     )
   )
   (printout t ?beltzKop)
-  (printout t "-")
+  (printout t "  ·  ")
   (printout t ?zuriKop crlf)
 )
