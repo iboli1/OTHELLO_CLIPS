@@ -196,7 +196,7 @@
 
 (deffunction posOnena (?unekoTxanda $?tablerue)
   (bind ?posOnena 0)
-  (bind ?scoreOnena 0)
+  (bind ?scoreOnena -100)
   (bind ?izkinak (create$ 1 ?*N* (-(* ?*N* (- ?*N* 1)) 1) ?*LENGTH*))
   (bind ?izkinenOndoan (create$ 2 (+ ?*N* 1) (+ ?*N* 2) (- ?*N* 1) (- (* ?*N* 2) 1) (* ?*N* 2) (+ (- ?*LENGTH* (* ?*N* 2)) 1) (+ (- ?*LENGTH* (* ?*N* 2)) 2) (+ (- ?*LENGTH* ?*N*) 2) (- (- ?*LENGTH* ?*N*) 1) (- ?*LENGTH* ?*N*) (- ?*LENGTH* 1)))
   (loop-for-count (?i 1 ?*LENGTH*)

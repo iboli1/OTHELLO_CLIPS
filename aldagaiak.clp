@@ -1,3 +1,3 @@
 ; Aldagai globalak: 
-(defglobal ?*N* = 8)
+(defglobal ?*N* = 6)
 (defglobal ?*LENGTH* = (* ?*N* ?*N*))
