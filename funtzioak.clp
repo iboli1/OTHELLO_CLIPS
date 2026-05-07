@@ -207,8 +207,13 @@
 (deffunction posOnena (?unekoTxanda $?tablerue)
   (bind ?posOnena 0)
   (bind ?scoreOnena -100)
-  (bind ?izkinak (create$ 1 ?*N* (-(* ?*N* (- ?*N* 1)) 1) ?*LENGTH*))
+  (bind ?izkinak (create$ 1 ?*N* (+ (- ?*LENGTH* ?*N*) 1) ?*LENGTH*))
   (bind ?izkinenOndoan (create$ 2 (+ ?*N* 1) (+ ?*N* 2) (- ?*N* 1) (- (* ?*N* 2) 1) (* ?*N* 2) (+ (- ?*LENGTH* (* ?*N* 2)) 1) (+ (- ?*LENGTH* (* ?*N* 2)) 2) (+ (- ?*LENGTH* ?*N*) 2) (- (- ?*LENGTH* ?*N*) 1) (- ?*LENGTH* ?*N*) (- ?*LENGTH* 1)))
+  (if (eq ?unekoTxanda zuria) then
+    (bind ?aurkariTxanda beltza)
+  else
+    (bind ?aurkariTxanda zuria)
+  )
   (loop-for-count (?i 1 ?*LENGTH*)
     (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
       (bind ?fitxaKopHur (zenbatFitxa ?i ?unekoTxanda $?tablerue)) ;agenteak zenbat fitxa edukiko lituzke mugimendu hori egiten badu
@@ -223,7 +228,7 @@
 
       (bind ?tKopia (fitxakAldatu ?i ?unekoTxanda $?tablerue))
       (bind ?score (+ ?score (mugimenduLegalKop ?unekoTxanda $?tKopia)))
-
+      (bind ?score (- ?score (mugimenduLegalKop ?aurkariTxanda $?tKopia)))
 
       (if (< ?scoreOnena ?score) then
         (bind ?scoreOnena ?score)
@@ -263,6 +268,6 @@
     )
   )
   (printout t ?beltzKop)
-  (printout t "  ·  ")
+  (printout t "-")
   (printout t ?zuriKop crlf)
 )
