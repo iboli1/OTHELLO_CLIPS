@@ -119,6 +119,16 @@
   (return ?norantzaOnakLista)  
 )
 
+;zenbat mugimendu posible dauden kalkulatzen du
+(deffunction mugimenduLegalKop (?unekoTxanda $?tablerue)
+  (bind ?mugimenduKop 0)
+  (loop-for-count(?i 1 ?*LENGTH*)
+    (if (> (length$ (mugimenduLegala ?i ?unekoTxanda $?tablerue)) 0) then
+      (bind ?mugimenduKop (+ ?mugimenduKop 1))
+    )
+  )
+  (return ?mugimenduKop)
+)
 
 ;fitxak aldatzeko
 (deffunction fitxakAldatu (?pos ?unekoTxanda $?tablerue)
@@ -210,6 +220,11 @@
       (if (member$ ?i ?izkinenOndoan) then
         (bind ?score (- ?score 3))
       )
+
+      (bind ?tKopia (fitxakAldatu ?i ?unekoTxanda $?tablerue))
+      (bind ?score (+ ?score (mugimenduLegalKop ?unekoTxanda $?tKopia)))
+
+
       (if (< ?scoreOnena ?score) then
         (bind ?scoreOnena ?score)
         (bind ?posOnena ?i)
